@@ -1,0 +1,144 @@
+apply plugin: 'com.android.application'
+apply plugin: 'android-apt'
+apply plugin: 'org.greenrobot.greendao'
+apply plugin: 'com.antfortune.freeline'
+
+android {
+    compileSdkVersion rootProject.ext.compileSdk
+    buildToolsVersion rootProject.ext.buildTools
+
+    defaultConfig {
+        applicationId "com.dl7.mvp"
+        minSdkVersion rootProject.ext.minSdk
+        targetSdkVersion rootProject.ext.targetSdk
+        versionCode 104
+        versionName "1.0.4"
+        multiDexEnabled true;//解决方法数量超过65536个时无法编译的问题
+    }
+
+    signingConfigs {
+        release {
+            try {
+                storeFile file("./mvpapp.jks")
+                storePassword "abc123"
+                keyAlias "mvpapp"
+                keyPassword "abc123"
+            } catch (ex) {
+                throw new InvalidUserDataException(ex.toString())
+            }
+        }
+    }
+    //recommend
+    dexOptions {
+        jumboMode = true
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            signingConfig signingConfigs.release
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            debuggable true
+            minifyEnabled false
+            signingConfig signingConfigs.debug
+        }
+
+        greendao {
+            schemaVersion 4
+//            targetGenDir 'src/main/java'
+        }
+    }
+
+    lintOptions {
+        abortOnError false
+    }
+
+    applicationVariants.all { variant ->
+        variant.outputs.each { output ->
+            def outputFile = output.outputFile
+            if (outputFile != null && outputFile.name.endsWith('.apk')) {
+                def fileName = "MvpApp${defaultConfig.versionName}.apk"
+                output.outputFile = new File(outputFile.parent, fileName)
+            }
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    testCompile 'junit:junit:4.12'
+    compile 'com.android.support.constraint:constraint-layout:1.0.2'
+    compile "com.android.support:appcompat-v7:${rootProject.ext.support}"
+    compile "com.android.support:recyclerview-v7:${rootProject.ext.support}"
+    compile "com.android.support:cardview-v7:${rootProject.ext.support}"
+    compile "com.android.support:support-v4:${rootProject.ext.support}"
+    compile "com.android.support:design:${rootProject.ext.support}"
+
+    compile 'com.jakewharton:butterknife:8.2.1'
+    apt 'com.jakewharton:butterknife-compiler:8.2.1'
+
+    compile 'io.reactivex:rxjava:1.1.9'
+    compile 'io.reactivex:rxandroid:1.2.1'
+    compile 'com.jakewharton.rxbinding:rxbinding:0.4.0'
+    compile 'com.trello:rxlifecycle:1.0'
+    compile 'com.trello:rxlifecycle-components:1.0'
+    compile 'com.squareup.retrofit2:retrofit:2.1.0'
+    compile 'com.squareup.retrofit2:converter-gson:2.1.0'
+    compile 'com.squareup.retrofit2:adapter-rxjava:2.1.0'
+
+    //动画
+    compile 'com.nineoldandroids:library:2.4.0'
+    //权限
+    compile 'com.tbruyelle.rxpermissions:rxpermissions:0.9.1@aar'
+    //依赖注入框架库
+    compile 'com.google.dagger:dagger:2.6'
+    apt 'com.google.dagger:dagger-compiler:2.6'
+    //日志
+    compile 'com.orhanobut:logger:1.15'
+    //数据库
+    compile 'org.greenrobot:greendao:3.1.0'
+
+    //A circular ImageView for Android
+    compile 'de.hdodenhof:circleimageview:2.1.0'
+
+    //An amazing and convenient Android image slider
+    compile 'com.daimajia.slider:library:1.1.5'
+    //进度条库
+    compile 'com.daimajia.numberprogressbar:library:1.2'
+
+    //图片加载库
+    compile 'com.squareup.picasso:picasso:2.5.2'
+    //recyclerview动画库
+    compile 'jp.wasabeef:recyclerview-animators:2.2.3'
+    //图片支持手势的图片控件
+    compile 'com.github.chrisbanes.photoview:library:1.2.4'
+    //Android平台下的富文本解析器，支持Html和Markdown
+    compile 'com.zzhoujay.richtext:richtext:2.0.9'
+    //一个简单的Android标签控件.
+    compile 'com.github.Rukey7:DragSlopLayout:1.0.3'
+    //多功能的标签流布局
+    compile 'com.github.Rukey7:TagLayout:1.0.5'
+    //文件选择库
+    compile 'com.github.angads25:filepicker:1.0.6'
+    //This is a UI lib for Android. Effects like shining.(https://github.com/ChadCSong/ShineButton)
+    compile 'com.sackcentury:shinebutton:0.1.6'
+
+    //一个Android TabLayout库,目前有3个TabLayout
+    compile 'com.flyco.labelview:FlycoLabelView_Lib:1.0.2@aar'
+    //一个辅助开发的UI库，适用于某些特殊场景，如固定范围拖拽、动画、模糊效果等。可以和ViewPager联动
+    compile 'com.flyco.tablayout:FlycoTabLayout_Lib:2.1.0@aar'
+    //一个强大的Android对话框库,简化自定义对话框.支持2.2+.
+    compile 'com.flyco.dialog:FlycoDialog_Lib:1.3.2@aar'
+
+    //加载动画(https://github.com/ybq/Android-SpinKit)
+    compile 'com.github.ybq:Android-SpinKit:1.1.0'
+
+    compile 'com.zhy:changeskin:4.0.2'
+
+    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.4-beta2'
+    releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.4-beta2'
+
+}
+
